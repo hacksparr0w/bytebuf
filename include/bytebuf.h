@@ -34,7 +34,7 @@ typedef struct compositebytebuf {
 	size_t remaining;
 } compositebytebuf;
 
-inline void compositebytebuf_initialize(compositebytebuf *buf) {
+void compositebytebuf_initialize(compositebytebuf *buf) {
 	buf->front = NULL;
 	buf->back = NULL;
 	buf->cursor = NULL;
@@ -57,11 +57,11 @@ bytebufreturncode compositebytebuf_pop_front(
 bytebufreturncode compositebytebuf_push_back(
 	compositebytebuf *buf,
 	size_t size,
-	const char *data
+	char *data
 );
 
 bytebufreturncode compositebytebuf_push_front(
 	compositebytebuf *buf,
 	size_t size,
-	const char *data
+	char *data
 );

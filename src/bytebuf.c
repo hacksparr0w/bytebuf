@@ -1,4 +1,6 @@
-#include "bytebuf.h"
+#include <stdlib.h>
+
+#include <bytebuf.h>
 
 bytebufreturncode compositebytebuf_pop_back(
 	compositebytebuf *buf,
@@ -74,7 +76,7 @@ bytebufreturncode compositebytebuf_pop_front(
 bytebufreturncode compositebytebuf_push_back(
 	compositebytebuf *buf,
 	size_t size,
-	const char *data
+	char *data
 ) {
 	bytebufcomponent *element = malloc(sizeof(bytebufcomponent));
 
@@ -103,7 +105,7 @@ bytebufreturncode compositebytebuf_push_back(
 bytebufreturncode compositebytebuf_push_front(
 	compositebytebuf *buf,
 	size_t size,
-	const char *data
+	char *data
 ) {
 	bytebufcomponent *element = malloc(sizeof(bytebufcomponent));
 
@@ -113,7 +115,6 @@ bytebufreturncode compositebytebuf_push_front(
 
 	element->size = size;
 	element->data = data;
-	
 
 	if (buf->front == NULL) {
 		buf->front = element;
