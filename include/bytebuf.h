@@ -40,6 +40,8 @@ typedef struct compositebytebuf {
 
 void compositebytebuf_initialize(compositebytebuf *buf);
 
+bool compositebytebuf_is_empty(compositebytebuf *buf);
+
 compositebytebufreturncode compositebytebuf_pop_back(
 	compositebytebuf *buf,
 	char **data

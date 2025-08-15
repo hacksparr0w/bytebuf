@@ -12,6 +12,10 @@ void compositebytebuf_initialize(compositebytebuf *buf) {
 	buf->size = 0;
 }
 
+bool compositebytebuf_is_empty(compositebytebuf *buf) {
+	return buf->back == NULL;
+}
+
 compositebytebufreturncode compositebytebuf_pop_back(
 	compositebytebuf *buf,
 	char **data
@@ -37,8 +41,9 @@ compositebytebufreturncode compositebytebuf_pop_back(
 			buf->cursor.position = back->previous->size;
 		}
 
-		buf->size -= back->size;
 		buf->back = back->previous;
+		buf->back->next = NULL;
+		buf->size -= back->size;
 
 		free(back);
 
@@ -71,8 +76,9 @@ compositebytebufreturncode compositebytebuf_pop_front(
 			buf->cursor.position = 0;
 		}
 
-		buf->size -= front->size;
 		buf->front = front->next;
+		buf->front->previous = NULL;
+		buf->size -= front->size;
 
 		free(front);
 
@@ -95,6 +101,8 @@ compositebytebufreturncode compositebytebuf_push_back(
 
 	component->size = size;
 	component->data = data;
+	component->previous = NULL;
+	component->next = NULL;
 
 	if (buf->back == NULL) {
 		buf->back = component;
@@ -104,7 +112,6 @@ compositebytebufreturncode compositebytebuf_push_back(
 		component->previous = buf->back;
 		buf->back->next = component;
 		buf->back = component;
-		buf->position -= size;
 	}
 
 	buf->size += size;
@@ -127,6 +134,8 @@ compositebytebufreturncode compositebytebuf_push_front(
 
 	component->size = size;
 	component->data = data;
+	component->previous = NULL;
+	component->next = NULL;
 
 	if (buf->front == NULL) {
 		buf->front = component;
