@@ -1,8 +1,12 @@
 project(
     'bytebuf',
     'c',
+    license: 'MIT',
     version : '1.0',
-    default_options : ['warning_level=3']
+    default_options : [
+      'c_std=c99',
+      'warning_level=3'
+    ]
 )
 
 project_description = 'A pure C implementation of a high-performance, zero-copy byte buffer'
@@ -31,24 +35,15 @@ project_target = shared_library(
   project_source_files,
   install : true,
   c_args : build_args,
-  gnu_symbol_visibility : 'hidden',
   include_directories : public_headers
 )
 
-project_dependency = declare_dependency(
+bytebuf_dep = declare_dependency(
   include_directories : public_headers,
   link_with : project_target
 )
 
-set_variable(
-    meson.project_name() + '_dep',
-    project_dependency
-)
-
-install_headers(
-    project_headers,
-    subdir: meson.project_name()
-)
+install_headers(project_headers)
 
 pkg_mod = import('pkgconfig')
 pkg_mod.generate(
@@ -59,13 +54,18 @@ pkg_mod.generate(
   libraries : project_target
 )
 
-if not meson.is_subproject()
-  test(
-    'test basic operations',
-    executable(
-      'test_basic_operations',
-      'tests/test_basic_operations.c',
-      dependencies : [project_dependency]
-    )
+unity_subproject = subproject('unity')
+unity_dep = unity_subproject.get_variable('unity_dep')
+unity_gen_runner = unity_subproject.get_variable('gen_test_runner')
+
+test(
+  'test compositebytebuf',
+  executable(
+    'test_compositebytebuf',
+    sources: [
+      'tests/test_compositebytebuf.c',
+      unity_gen_runner.process('tests/test_compositebytebuf.c')
+    ],
+    dependencies : [bytebuf_dep, unity_dep]
   )
-endif
+)

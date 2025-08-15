@@ -1,15 +1,25 @@
 #include <stdlib.h>
 
-#include <bytebuf.h>
+#include "bytebuf.h"
 
-bytebufreturncode compositebytebuf_pop_back(
+void compositebytebuf_initialize(compositebytebuf *buf) {
+	buf->back = NULL;
+	buf->front = NULL;
+	buf->cursor.component = NULL;
+	buf->cursor.position = 0;
+
+	buf->position = 0;
+	buf->size = 0;
+}
+
+compositebytebufreturncode compositebytebuf_pop_back(
 	compositebytebuf *buf,
 	char **data
 ) {
-	bytebufcomponent *back = buf->back;
+	compositebytebufcomponent *back = buf->back;
 
 	if (back == NULL) {
-		return BYTEBUF_EMPTY_ERROR;
+		return COMPOSITEBYTEBUF_EMPTY_ERROR;
 	} else if (back == buf->front) {
 		*data = back->data;
 
@@ -17,35 +27,33 @@ bytebufreturncode compositebytebuf_pop_back(
 
 		free(back);
 
-		return BYTEBUF_OK;
+		return COMPOSITEBYTEBUF_OK;
 	} else {
 		*data = back->data;
 
-		if (buf->cursor == back) {
-			buf->cursor = back->previous;
-
-			buf->position = 0;
-			buf->remaining += buf->cursor->size;
+		if (buf->cursor.component == back) {
+			buf->position -= buf->cursor.position;
+			buf->cursor.component = back->previous;
+			buf->cursor.position = back->previous->size;
 		}
-		
+
 		buf->size -= back->size;
-		buf->remaining -= back->size;
 		buf->back = back->previous;
 
 		free(back);
 
-		return BYTEBUF_OK;
+		return COMPOSITEBYTEBUF_OK;
 	}
 }
 
-bytebufreturncode compositebytebuf_pop_front(
+compositebytebufreturncode compositebytebuf_pop_front(
 	compositebytebuf *buf,
 	char **data
 ) {
-	bytebufcomponent *front = buf->front;
+	compositebytebufcomponent *front = buf->front;
 
 	if (front == NULL) {
-		return BYTEBUF_EMPTY_ERROR;
+		return COMPOSITEBYTEBUF_EMPTY_ERROR;
 	} else if (front == buf->back) {
 		*data = front->data;
 
@@ -53,15 +61,14 @@ bytebufreturncode compositebytebuf_pop_front(
 
 		free(front);
 
-		return BYTEBUF_OK;
+		return COMPOSITEBYTEBUF_OK;
 	} else {
 		*data = front->data;
 
-		if (buf->cursor == front) {
-			buf->cursor = front->next;
-
-			buf->remaining -= front->size - buf->position;
+		if (buf->cursor.component == front) {
 			buf->position = 0;
+			buf->cursor.component = front->next;
+			buf->cursor.position = 0;
 		}
 
 		buf->size -= front->size;
@@ -69,63 +76,74 @@ bytebufreturncode compositebytebuf_pop_front(
 
 		free(front);
 
-		return BYTEBUF_OK;
+		return COMPOSITEBYTEBUF_OK;
 	}
 }
 
-bytebufreturncode compositebytebuf_push_back(
+compositebytebufreturncode compositebytebuf_push_back(
 	compositebytebuf *buf,
 	size_t size,
 	char *data
 ) {
-	bytebufcomponent *element = malloc(sizeof(bytebufcomponent));
+	compositebytebufcomponent *component = malloc(
+		sizeof(compositebytebufcomponent)
+	);
 
-	if (element == NULL) {
-		return BYTEBUF_MALLOC_ERROR;
+	if (component == NULL) {
+		return COMPOSITEBYTEBUF_MALLOC_ERROR;
 	}
 
-	element->size = size;
-	element->data = data;
+	component->size = size;
+	component->data = data;
 
 	if (buf->back == NULL) {
-		buf->back = element;
-		buf->front = element;
+		buf->back = component;
+		buf->front = component;
+		buf->cursor.component = component;
 	} else {
-		element->previous = buf->back;
-		buf->back->next = element;
-		buf->back = element;
+		component->previous = buf->back;
+		buf->back->next = component;
+		buf->back = component;
+		buf->position -= size;
 	}
 
 	buf->size += size;
-	buf->remaining += size;
 
-	return BYTEBUF_OK;
+	return COMPOSITEBYTEBUF_OK;
 }
 
-bytebufreturncode compositebytebuf_push_front(
+compositebytebufreturncode compositebytebuf_push_front(
 	compositebytebuf *buf,
 	size_t size,
 	char *data
 ) {
-	bytebufcomponent *element = malloc(sizeof(bytebufcomponent));
+	compositebytebufcomponent *component = malloc(
+		sizeof(compositebytebufcomponent)
+	);
 
-	if (element == NULL) {
-		return BYTEBUF_MALLOC_ERROR;
+	if (component == NULL) {
+		return COMPOSITEBYTEBUF_MALLOC_ERROR;
 	}
 
-	element->size = size;
-	element->data = data;
+	component->size = size;
+	component->data = data;
 
 	if (buf->front == NULL) {
-		buf->front = element;
-		buf->back = element;
+		buf->front = component;
+		buf->back = component;
+		buf->cursor.component = component;
 	} else {
-		element->next= buf->front;
-		buf->front->previous = element;
-		buf->front = element;
+		component->next = buf->front;
+		buf->front->previous = component;
+		buf->front = component;
+		buf->position += size;
 	}
 
 	buf->size += size;
 
-	return BYTEBUF_OK;
+	return COMPOSITEBYTEBUF_OK;
+}
+
+size_t compositebytebuf_remaining(compositebytebuf *buf) {
+	return buf->size - buf->position;
 }

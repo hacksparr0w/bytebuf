@@ -3,65 +3,63 @@
 #include <stddef.h>
 #include <stdbool.h>
 
-typedef enum bytebufreturncode {
-	BYTEBUF_OK = 0,
-	BYTEBUF_MALLOC_ERROR = 1,
-	BYTEBUF_EMPTY_ERROR = 2,
-} bytebufreturncode;
+typedef enum compositebytebufreturncode {
+	COMPOSITEBYTEBUF_OK = 0,
+	COMPOSITEBYTEBUF_MALLOC_ERROR = 1,
+	COMPOSITEBYTEBUF_EMPTY_ERROR = 2
+} compositebytebufreturncode;
 
-typedef struct bytebufcomponent {
+typedef struct compositebytebufcomponent {
 	size_t size;
 	char *data;
 
-	struct bytebufcomponent *previous;
-	struct bytebufcomponent *next;
-} bytebufcomponent;
+	struct compositebytebufcomponent *previous;
+	struct compositebytebufcomponent *next;
+} compositebytebufcomponent;
 
-typedef struct bytebufreadresult {
+typedef struct compositebytebufcursor {
+	size_t position;
+	compositebytebufcomponent *component;
+} compositebytebufcursor;
+
+typedef struct compositebytebufreadresult {
 	size_t size;
 	char *data;
 
 	bool is_copy;
-} bytebufreadresult;
+} compositebytebufreadresult;
 
 typedef struct compositebytebuf {
-	bytebufcomponent *front;
-	bytebufcomponent *back;
-	bytebufcomponent *cursor;
+	compositebytebufcomponent *back;
+	compositebytebufcomponent *front;
+	compositebytebufcursor cursor;
 
-	size_t position;
 	size_t size;
-	size_t remaining;
+	size_t position;
 } compositebytebuf;
 
-void compositebytebuf_initialize(compositebytebuf *buf) {
-	buf->front = NULL;
-	buf->back = NULL;
-	buf->cursor = NULL;
+void compositebytebuf_initialize(compositebytebuf *buf);
 
-	buf->position = 0;
-	buf->size = 0;
-	buf->remaining = 0;
-}
-
-bytebufreturncode compositebytebuf_pop_back(
+compositebytebufreturncode compositebytebuf_pop_back(
 	compositebytebuf *buf,
 	char **data
 );
 
-bytebufreturncode compositebytebuf_pop_front(
+compositebytebufreturncode compositebytebuf_pop_front(
 	compositebytebuf *buf,
 	char **data
 );
 
-bytebufreturncode compositebytebuf_push_back(
+compositebytebufreturncode compositebytebuf_push_back(
 	compositebytebuf *buf,
 	size_t size,
 	char *data
 );
 
-bytebufreturncode compositebytebuf_push_front(
+compositebytebufreturncode compositebytebuf_push_front(
 	compositebytebuf *buf,
 	size_t size,
 	char *data
 );
+
+size_t compositebytebuf_remaining(compositebytebuf *buf);
