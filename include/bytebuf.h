@@ -6,7 +6,8 @@
 typedef enum compositebytebufreturncode {
 	COMPOSITEBYTEBUF_OK = 0,
 	COMPOSITEBYTEBUF_MALLOC_ERROR = 1,
-	COMPOSITEBYTEBUF_EMPTY_ERROR = 2
+	COMPOSITEBYTEBUF_EMPTY_ERROR = 2,
+	COMPOSITEBYTEBUF_OUT_OF_BOUNDS_ERROR = 3
 } compositebytebufreturncode;
 
 typedef struct compositebytebufcomponent {
@@ -42,6 +43,8 @@ void compositebytebuf_initialize(compositebytebuf *buf);
 
 bool compositebytebuf_is_empty(compositebytebuf *buf);
 
+size_t compositebytebuf_remaining(compositebytebuf *buf);
+
 compositebytebufreturncode compositebytebuf_pop_back(
 	compositebytebuf *buf,
 	char **data
@@ -64,4 +67,14 @@ compositebytebufreturncode compositebytebuf_push_front(
 	char *data
 );
 
-size_t compositebytebuf_remaining(compositebytebuf *buf);
+compositebytebufreturncode compositebytebuf_move_position(
+	compositebytebuf *buf,
+	ptrdiff_t delta,
+	bool check_bounds
+);
+
+compositebytebufreturncode compositebytebuf_set_position(
+	compositebytebuf *buf,
+	size_t position,
+	bool check_bounds
+);

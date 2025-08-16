@@ -16,6 +16,10 @@ bool compositebytebuf_is_empty(compositebytebuf *buf) {
 	return buf->back == NULL;
 }
 
+size_t compositebytebuf_remaining(compositebytebuf *buf) {
+	return buf->size - buf->position;
+}
+
 compositebytebufreturncode compositebytebuf_pop_back(
 	compositebytebuf *buf,
 	char **data
@@ -153,6 +157,84 @@ compositebytebufreturncode compositebytebuf_push_front(
 	return COMPOSITEBYTEBUF_OK;
 }
 
-size_t compositebytebuf_remaining(compositebytebuf *buf) {
-	return buf->size - buf->position;
+compositebytebufreturncode compositebytebuf_check_bounds(
+	compositebytebuf *buf,
+	ptrdiff_t delta
+) {
+	if (delta == 0) {
+		return COMPOSITEBYTEBUF_OK;
+	} else if (delta > 0) {
+		ptrdiff_t remaining = compositebytebuf_remaining(buf);
+
+		if (delta > remaining) {
+			return COMPOSITEBYTEBUF_OUT_OF_BOUNDS_ERROR;
+		}
+	} else {
+		ptrdiff_t remaining = buf->position;
+
+		if (-delta > remaining) {
+			return COMPOSITEBYTEBUF_OUT_OF_BOUNDS_ERROR;
+		}
+	}
+
+	return COMPOSITEBYTEBUF_OK;
+}
+
+compositebytebufreturncode compositebytebuf_move_position(
+	compositebytebuf *buf,
+	ptrdiff_t delta,
+	bool check_bounds
+) {
+	if (check_bounds) {
+		compositebytebufreturncode result = compositebytebuf_check_bounds(
+			buf,
+			delta
+		);
+
+		if (result != COMPOSITEBYTEBUF_OK) {
+			return result;
+		}
+	}
+
+	buf->position += delta;
+
+	while (delta != 0) {
+		if (delta > 0) {
+			ptrdiff_t remaining = (
+				buf->cursor.component->size - buf->cursor.position
+			);
+
+			if (remaining >= delta) {
+				buf->cursor.position += delta;
+				break;
+			} else {
+				delta -= remaining;
+				buf->cursor.component = buf->cursor.component->next;
+				buf->cursor.position = 0;
+			}
+		} else {
+			ptrdiff_t remaining = buf->cursor.position;
+
+			if (remaining >= -delta) {
+				buf->cursor.position += delta;
+				break;
+			} else {
+				delta += remaining;
+				buf->cursor.component = buf->cursor.component->previous;
+				buf->cursor.position = buf->cursor.component->size;
+			}
+		}
+	}
+
+	return COMPOSITEBYTEBUF_OK;
+}
+
+compositebytebufreturncode compositebytebuf_set_position(
+	compositebytebuf *buf,
+	size_t position,
+	bool check_bounds
+) {
+	ptrdiff_t delta = position - buf->position;
+
+	return compositebytebuf_move_position(buf, delta, check_bounds);
 }

@@ -166,4 +166,103 @@ void test_component_operations(void) {
         compositebytebuf_remaining(&buf),
         sizes[0]
     );
+
+    r = compositebytebuf_set_position(&buf, 0, true);
+
+    TEST_ASSERT_EQUAL(r, COMPOSITEBYTEBUF_OK);
+    TEST_ASSERT_NOT_EQUAL(buf.back, NULL);
+    TEST_ASSERT_EQUAL(buf.back->previous, buf.front);
+    TEST_ASSERT_EQUAL(buf.back->next, NULL);
+    TEST_ASSERT_EQUAL(buf.back->size, sizes[0]);
+    TEST_ASSERT_EQUAL(buf.back->data, data[0]);
+    TEST_ASSERT_NOT_EQUAL(buf.front, NULL);
+    TEST_ASSERT_EQUAL(buf.front->previous, NULL);
+    TEST_ASSERT_EQUAL(buf.front->next, buf.back);
+    TEST_ASSERT_EQUAL(buf.front->size, sizes[1]);
+    TEST_ASSERT_EQUAL(buf.front->data, data[1]);
+    TEST_ASSERT_EQUAL(buf.cursor.component, buf.front);
+    TEST_ASSERT_EQUAL(buf.cursor.position, 0);
+    TEST_ASSERT_EQUAL(buf.size, sizes[0] + sizes[1]);
+    TEST_ASSERT_EQUAL(buf.position, 0);
+    TEST_ASSERT_FALSE(compositebytebuf_is_empty(&buf));
+    TEST_ASSERT_EQUAL(
+        compositebytebuf_remaining(&buf),
+        sizes[0] + sizes[1]
+    );
+
+    r = compositebytebuf_move_position(&buf, 1, true);
+
+    TEST_ASSERT_EQUAL(r, COMPOSITEBYTEBUF_OK);
+    TEST_ASSERT_NOT_EQUAL(buf.back, NULL);
+    TEST_ASSERT_EQUAL(buf.back->previous, buf.front);
+    TEST_ASSERT_EQUAL(buf.back->next, NULL);
+    TEST_ASSERT_EQUAL(buf.back->size, sizes[0]);
+    TEST_ASSERT_EQUAL(buf.back->data, data[0]);
+    TEST_ASSERT_NOT_EQUAL(buf.front, NULL);
+    TEST_ASSERT_EQUAL(buf.front->previous, NULL);
+    TEST_ASSERT_EQUAL(buf.front->next, buf.back);
+    TEST_ASSERT_EQUAL(buf.front->size, sizes[1]);
+    TEST_ASSERT_EQUAL(buf.front->data, data[1]);
+    TEST_ASSERT_EQUAL(buf.cursor.component, buf.front);
+    TEST_ASSERT_EQUAL(buf.cursor.position, 1);
+    TEST_ASSERT_EQUAL(buf.size, sizes[0] + sizes[1]);
+    TEST_ASSERT_EQUAL(buf.position, 1);
+    TEST_ASSERT_FALSE(compositebytebuf_is_empty(&buf));
+    TEST_ASSERT_EQUAL(
+        compositebytebuf_remaining(&buf),
+        sizes[0] + sizes[1] - 1
+    );
+
+    r = compositebytebuf_move_position(&buf, sizes[1], true);
+
+    TEST_ASSERT_EQUAL(r, COMPOSITEBYTEBUF_OK);
+    TEST_ASSERT_NOT_EQUAL(buf.back, NULL);
+    TEST_ASSERT_EQUAL(buf.back->previous, buf.front);
+    TEST_ASSERT_EQUAL(buf.back->next, NULL);
+    TEST_ASSERT_EQUAL(buf.back->size, sizes[0]);
+    TEST_ASSERT_EQUAL(buf.back->data, data[0]);
+    TEST_ASSERT_NOT_EQUAL(buf.front, NULL);
+    TEST_ASSERT_EQUAL(buf.front->previous, NULL);
+    TEST_ASSERT_EQUAL(buf.front->next, buf.back);
+    TEST_ASSERT_EQUAL(buf.front->size, sizes[1]);
+    TEST_ASSERT_EQUAL(buf.front->data, data[1]);
+    TEST_ASSERT_EQUAL(buf.cursor.component, buf.back);
+    TEST_ASSERT_EQUAL(buf.cursor.position, 1);
+    TEST_ASSERT_EQUAL(buf.size, sizes[0] + sizes[1]);
+    TEST_ASSERT_EQUAL(buf.position, sizes[1] + 1);
+    TEST_ASSERT_FALSE(compositebytebuf_is_empty(&buf));
+    TEST_ASSERT_EQUAL(
+        compositebytebuf_remaining(&buf),
+        sizes[0] - 1
+    );
+
+    r = compositebytebuf_pop_back(&buf, &p);
+
+    TEST_ASSERT_EQUAL(r, COMPOSITEBYTEBUF_OK);
+    TEST_ASSERT_EQUAL(p, data[0]);
+    TEST_ASSERT_NOT_EQUAL(buf.back, NULL);
+    TEST_ASSERT_EQUAL(buf.back->previous, NULL);
+    TEST_ASSERT_EQUAL(buf.back->next, NULL);
+    TEST_ASSERT_EQUAL(buf.back->size, sizes[1]);
+    TEST_ASSERT_EQUAL(buf.back->data, data[1]);
+    TEST_ASSERT_EQUAL(buf.front, buf.back);
+    TEST_ASSERT_EQUAL(buf.cursor.component, buf.back);
+    TEST_ASSERT_EQUAL(buf.cursor.position, sizes[1]);
+    TEST_ASSERT_EQUAL(buf.size, sizes[1]);
+    TEST_ASSERT_EQUAL(buf.position, sizes[1]);
+    TEST_ASSERT_FALSE(compositebytebuf_is_empty(&buf));
+    TEST_ASSERT_EQUAL(compositebytebuf_remaining(&buf), 0);
+
+    r = compositebytebuf_pop_back(&buf, &p);
+
+    TEST_ASSERT_EQUAL(r, COMPOSITEBYTEBUF_OK);
+    TEST_ASSERT_EQUAL(p, data[1]);
+    TEST_ASSERT_EQUAL(buf.back, NULL);
+    TEST_ASSERT_EQUAL(buf.front, NULL);
+    TEST_ASSERT_EQUAL(buf.cursor.component, NULL);
+    TEST_ASSERT_EQUAL(buf.cursor.position, 0);
+    TEST_ASSERT_EQUAL(buf.size, 0);
+    TEST_ASSERT_EQUAL(buf.position, 0);
+    TEST_ASSERT_TRUE(compositebytebuf_is_empty(&buf));
+    TEST_ASSERT_EQUAL(compositebytebuf_remaining(&buf), 0);
 }
