@@ -54,18 +54,20 @@ pkg_mod.generate(
   libraries : project_target
 )
 
-unity_subproject = subproject('unity')
-unity_dep = unity_subproject.get_variable('unity_dep')
-unity_gen_runner = unity_subproject.get_variable('gen_test_runner')
+if not meson.is_subproject()
+  unity_subproject = subproject('unity')
+  unity_dep = unity_subproject.get_variable('unity_dep')
+  unity_gen_runner = unity_subproject.get_variable('gen_test_runner')
 
-test(
-  'test bytebuf',
-  executable(
-    'test_bytebuf',
-    sources: [
-      'tests/test_bytebuf.c',
-      unity_gen_runner.process('tests/test_bytebuf.c')
-    ],
-    dependencies : [bytebuf_dep, unity_dep]
+  test(
+    'test bytebuf',
+    executable(
+      'test_bytebuf',
+      sources: [
+        'tests/test_bytebuf.c',
+        unity_gen_runner.process('tests/test_bytebuf.c')
+      ],
+      dependencies : [bytebuf_dep, unity_dep]
+    )
   )
-)
+endif
