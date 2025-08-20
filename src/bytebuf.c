@@ -5,7 +5,7 @@
 
 #include "bytebuf.h"
 
-#define DEFINE_BYTEBUF_READ_INTEGRAL(NAME, TYPE, DECODE)                     \
+#define DEFINE_BYTEBUF_READ_INT(NAME, TYPE, DECODE)                          \
 bytebuf_error NAME(bytebuf *buf, TYPE *value) {                              \
     bytebuf_error error;                                                     \
     bytebuf_view view;                                                       \
@@ -392,47 +392,17 @@ bytebuf_error bytebuf_read(bytebuf *buf, size_t size, bytebuf_view *view) {
 	return BYTEBUF_OK;
 }
 
-DEFINE_BYTEBUF_READ_INTEGRAL(bytebuf_read_int8, int8_t, decode_int8)
-DEFINE_BYTEBUF_READ_INTEGRAL(bytebuf_read_int16_be, int16_t, decode_int16_be)
-DEFINE_BYTEBUF_READ_INTEGRAL(bytebuf_read_int16_le, int16_t, decode_int16_le)
-DEFINE_BYTEBUF_READ_INTEGRAL(bytebuf_read_int32_be, int32_t, decode_int32_be)
-DEFINE_BYTEBUF_READ_INTEGRAL(bytebuf_read_int32_le, int32_t, decode_int32_le)
-DEFINE_BYTEBUF_READ_INTEGRAL(bytebuf_read_int64_be, int64_t, decode_int64_be)
-DEFINE_BYTEBUF_READ_INTEGRAL(bytebuf_read_int64_le, int64_t, decode_int64_le)
-
-DEFINE_BYTEBUF_READ_INTEGRAL(bytebuf_read_uint8, uint8_t, decode_uint8)
-DEFINE_BYTEBUF_READ_INTEGRAL(
-	bytebuf_read_uint16_be,
-	uint16_t,
-	decode_uint16_be
-)
-
-DEFINE_BYTEBUF_READ_INTEGRAL(
-	bytebuf_read_uint16_le,
-	uint16_t,
-	decode_uint16_le
-)
-
-DEFINE_BYTEBUF_READ_INTEGRAL(
-	bytebuf_read_uint32_be,
-	uint32_t,
-	decode_uint32_be
-)
-
-DEFINE_BYTEBUF_READ_INTEGRAL(
-	bytebuf_read_uint32_le,
-	uint32_t,
-	decode_uint32_le
-)
-
-DEFINE_BYTEBUF_READ_INTEGRAL(
-	bytebuf_read_uint64_be,
-	uint64_t,
-	decode_uint64_be
-)
-
-DEFINE_BYTEBUF_READ_INTEGRAL(
-	bytebuf_read_uint64_le,
-	uint64_t,
-	decode_uint64_le
-)
+DEFINE_BYTEBUF_READ_INT(bytebuf_read_int8, int8_t, decode_int8)
+DEFINE_BYTEBUF_READ_INT(bytebuf_read_int16_be, int16_t, decode_int16_be)
+DEFINE_BYTEBUF_READ_INT(bytebuf_read_int16_le, int16_t, decode_int16_le)
+DEFINE_BYTEBUF_READ_INT(bytebuf_read_int32_be, int32_t, decode_int32_be)
+DEFINE_BYTEBUF_READ_INT(bytebuf_read_int32_le, int32_t, decode_int32_le)
+DEFINE_BYTEBUF_READ_INT(bytebuf_read_int64_be, int64_t, decode_int64_be)
+DEFINE_BYTEBUF_READ_INT(bytebuf_read_int64_le, int64_t, decode_int64_le)
+DEFINE_BYTEBUF_READ_INT(bytebuf_read_uint8, uint8_t, decode_uint8)
+DEFINE_BYTEBUF_READ_INT(bytebuf_read_uint16_be, uint16_t, decode_uint16_be)
+DEFINE_BYTEBUF_READ_INT(bytebuf_read_uint16_le, uint16_t, decode_uint16_le)
+DEFINE_BYTEBUF_READ_INT(bytebuf_read_uint32_be, uint32_t, decode_uint32_be)
+DEFINE_BYTEBUF_READ_INT(bytebuf_read_uint32_le, uint32_t, decode_uint32_le)
+DEFINE_BYTEBUF_READ_INT(bytebuf_read_uint64_be, uint64_t, decode_uint64_be)
+DEFINE_BYTEBUF_READ_INT(bytebuf_read_uint64_le, uint64_t, decode_uint64_le)
