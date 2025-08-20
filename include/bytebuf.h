@@ -57,40 +57,16 @@ bytebuf_error bytebuf_set_position(bytebuf *buf, size_t position);
 bytebuf_error bytebuf_read(bytebuf *buf, size_t size, bytebuf_view *view);
 
 bytebuf_error bytebuf_read_int8(bytebuf *buf, int8_t *value);
-bytebuf_error bytebuf_read_int8_safe(bytebuf *buf, int8_t *value);
-
 bytebuf_error bytebuf_read_int16_be(bytebuf *buf, int16_t *value);
-bytebuf_error bytebuf_read_int16_be_safe(bytebuf *buf, int16_t *value);
-
 bytebuf_error bytebuf_read_int16_le(bytebuf *buf, int16_t *value);
-bytebuf_error bytebuf_read_int16_le_safe(bytebuf *buf, int16_t *value);
-
 bytebuf_error bytebuf_read_int32_be(bytebuf *buf, int32_t *value);
-bytebuf_error bytebuf_read_int32_be_safe(bytebuf *buf, int32_t *value);
-
 bytebuf_error bytebuf_read_int32_le(bytebuf *buf, int32_t *value);
-bytebuf_error bytebuf_read_int32_le_safe(bytebuf *buf, int32_t *value);
-
 bytebuf_error bytebuf_read_int64_be(bytebuf *buf, int64_t *value);
-bytebuf_error bytebuf_read_int64_be_safe(bytebuf *buf, int64_t *value);
-
 bytebuf_error bytebuf_read_int64_le(bytebuf *buf, int64_t *value);
-bytebuf_error bytebuf_read_int64_le_safe(bytebuf *buf, int64_t *value);
 
 bytebuf_error bytebuf_read_uint16_be(bytebuf *buf, uint16_t *value);
-bytebuf_error bytebuf_read_uint16_be_safe(bytebuf *buf, uint16_t *value);
-
 bytebuf_error bytebuf_read_uint16_le(bytebuf *buf, uint16_t *value);
-bytebuf_error bytebuf_read_uint16_le_safe(bytebuf *buf, uint16_t *value);
-
 bytebuf_error bytebuf_read_uint32_be(bytebuf *buf, uint32_t *value);
-bytebuf_error bytebuf_read_uint32_be_safe(bytebuf *buf, uint32_t *value);
-
 bytebuf_error bytebuf_read_uint32_le(bytebuf *buf, uint32_t *value);
-bytebuf_error bytebuf_read_uint32_le_safe(bytebuf *buf, uint32_t *value);
-
 bytebuf_error bytebuf_read_uint64_be(bytebuf *buf, uint64_t *value);
-bytebuf_error bytebuf_read_uint64_be_safe(bytebuf *buf, uint64_t *value);
-
 bytebuf_error bytebuf_read_uint64_le(bytebuf *buf, uint64_t *value);
-bytebuf_error bytebuf_read_uint64_le_safe(bytebuf *buf, uint64_t *value);
