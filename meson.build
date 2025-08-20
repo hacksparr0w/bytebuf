@@ -59,12 +59,12 @@ unity_dep = unity_subproject.get_variable('unity_dep')
 unity_gen_runner = unity_subproject.get_variable('gen_test_runner')
 
 test(
-  'test compositebytebuf',
+  'test bytebuf',
   executable(
-    'test_compositebytebuf',
+    'test_bytebuf',
     sources: [
-      'tests/test_compositebytebuf.c',
-      unity_gen_runner.process('tests/test_compositebytebuf.c')
+      'tests/test_bytebuf.c',
+      unity_gen_runner.process('tests/test_bytebuf.c')
     ],
     dependencies : [bytebuf_dep, unity_dep]
   )
