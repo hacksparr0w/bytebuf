@@ -31,7 +31,7 @@ build_args += [
 ]
 
 if target_machine.system() == 'windows' or target_machine.system() == 'cygwin'
-  build_args += '-DBYTEBUF_PUBLIC="__declspec(dllexport)"'
+  build_args += '-DBYTEBUF_PUBLIC=__declspec(dllexport)'
 else
   build_args += '-DBYTEBUF_PUBLIC=__attribute__((visibility("default")))'
 endif
