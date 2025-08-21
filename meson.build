@@ -30,6 +30,12 @@ build_args += [
   '-DPROJECT_VERSION=' + meson.project_version()
 ]
 
+if target_machine.system() == 'windows' or target_machine.system() == 'cygwin'
+  build_args += '-DBYTEBUF_PUBLIC="__declspec(dllexport)"'
+else
+  build_args += '-DBYTEBUF_PUBLIC=__attribute__((visibility("default")))'
+endif
+
 project_target = shared_library(
   meson.project_name(),
   project_source_files,
